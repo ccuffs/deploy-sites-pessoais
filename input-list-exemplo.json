@@ -1,0 +1,14 @@
+[
+    {
+        "uid": "fernando.bevilacqua",
+        "serve_url": "fernando.bevilacqua",
+        "source_url": "https://github.com/Dovyski/ccuffs-site",
+        "source_type": "git"
+    },
+    {
+        "uid": "lcaimi",
+        "serve_url": "lcaimi",
+        "source_url": "https://github.com/lcaimi/ccuffs-site",
+        "source_type": "git"
+    }
+]

@@ -1,0 +1,7 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "7.0",
+        "vanilla/garden-cli": "~2.0",
+        "kevinlebrun/colors.php": "1.0.*"
+    }
+}
