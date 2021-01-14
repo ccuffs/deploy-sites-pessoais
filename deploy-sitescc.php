@@ -11,6 +11,11 @@ function yellow($str, $eol = false) {
     return $c($str)->yellow . ($eol ? PHP_EOL : '');
 }
 
+function magenta($str, $eol = false) {
+    $c = new Color();
+    return $c($str)->magenta . ($eol ? PHP_EOL : '');
+}
+
 function green($str, $eol = false) {
     $c = new Color();
     return $c($str)->green . ($eol ? PHP_EOL : '');
@@ -24,7 +29,7 @@ function white($str, $eol = false) {
 function fetch_site($site, $output_dir_path, $control_dir) {
     $fetcher_path = __DIR__ . DIRECTORY_SEPARATOR . 'fetch_site.php';
     $output_path = join(DIRECTORY_SEPARATOR, [$output_dir_path, $site->serve_url]);
-    $prefix = join(DIRECTORY_SEPARATOR, [$control_dir, $site->id . '-' . $site->uid]);
+    $prefix = join(DIRECTORY_SEPARATOR, [$control_dir, $site->id]);
     $command = "php $fetcher_path --type=$site->source_type --input=\"$site->source_url\" --output=\"$output_path\" --prefix=\"$prefix\" &";
 
     exec($command);
@@ -87,9 +92,13 @@ foreach($sites as $site) {
         echo white('Processando lote ') . yellow(sprintf('%03d', $batchs_processed)) . '/' . yellow(sprintf('%03d', $total_batches)) . white(':'). PHP_EOL;
     }
 
-    echo white('  - ') . green($site->source_url) . white(' -> ') . yellow('/' . $site->serve_url) . PHP_EOL;
-    fetch_site($site, $outpur_dir_path, $control_dir_path);
-    usleep($site_interval);
+    if(!empty($site->source_url)) {
+        echo white('  - ') . green($site->source_url) . white(' -> ') . yellow('/' . $site->serve_url) . PHP_EOL;
+        fetch_site($site, $outpur_dir_path, $control_dir_path);
+        usleep($site_interval);
+    } else {
+        echo magenta('  SKIP (empty source) ') . white('uid = ' . $site->uid . ', id = ' . $site->id) . PHP_EOL;
+    }
 
     $items_processed++;
 
