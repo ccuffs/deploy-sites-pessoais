@@ -1,56 +1,88 @@
 <p align="center">
     <img width="400" height="200" src=".github/logo.png" title="Logo do projeto"><br />
-    <img src="https://img.shields.io/maintenance/yes/2020?style=for-the-badge" title="Status do projeto">
+    <img src="https://img.shields.io/maintenance/yes/2021?style=for-the-badge" title="Status do projeto">
     <img src="https://img.shields.io/github/workflow/status/ccuffs/template/ci.uffs.cc?label=Build&logo=github&logoColor=white&style=for-the-badge" title="Status do build">
 </p>
 
-# Título
+# Sobre
 
-Coloque uma descrição do projeto aqui. Geralmente essa descrição tem de duas a três linhas de tamanho. Ela deve dar uma visão geral sobre o que é o projeto, ex.: tecnologia usada, filosofia de existência, qual problema tenta-se resolver, etc. Se você precisa escrever mais que 3 linhas de descrição, crie subseções.
+Esse repositório contém os códigos e scripts utilizados para fazer deploy dos [sites pessoais](https://cc.uffs.edu.br/sites) do curso de [Ciência da Computação](https://cc.uffs.edu.br) da [Universidade Federal da Fronteira Sul](https://www.uffs.edu.br). A gerência de quais sites existem e suas propriedades (url, etc) são manuseadas no [portal de intranet do curso](https://cc.uffs.edu.br/intranet), cujo código está no repositório [ccuffs/intranet](https://github.com/ccuffs/intranet).
 
-> **IMPORTANTE:** coloque aqui alguma mensagem que é muito relevante aos usuários do projeto, se for o caso.
+> ***IMPORTANTE:*** se você quer apenas utilizar os sites do curso, ex.: ter um site pessoal, veja a documentação em [cc.uffs.edu.br/sites](https://cc.uffs.edu.br/sites).
 
-## Features
+## Utilização
 
-Aqui você pode colocar uma screenshot do produto resultante desse projeto. Descreva também suas features usando uma lista:
+### 1. Pré-requisitos
 
-* Fácil integração;
-* Poucas dependências;
-* Utiliza um template lindo para organizar o `README`;
-* Possui ótima documentação e testes.
+Para rodar os scripts desse repositório, você precisa ter o [git](https://git-scm.com/), [php](https://php.net) e o [composer](https://getcomposer.org/) disponível na linha de comando.
 
-## Começando
+### 2. Preparando tudo
 
-### 1. Primeiro passo para começar
-
-Geralmente o primeiro passo para começar é instalar dependências para rodar o projeto. Rode:
+Clone o repositório
 
 ```
-apt get install dependencia
+git clone https://github.com/ccuffs/deploy-sites-pessoais & cd deploy-sites-pessoais
 ```
 
-Recomenda-se que cada comando seja colocado em uma linha diferente:
+Instale as dependências
 
 ```
-apt get install outra-coisa
+composer install
 ```
 
-Dessa forma os usuários podem copiar e colar sem ler as documentação (que é o que geralmente acontece).
-
-### 2. Outro(s) passo(s)
-
-Geralmente os próximos passos ensinam como instalar e configurar o projeto para uso/desenvolvimento. Rode:
+Se estiver em um ambiente Linux, certifique-se de dar permissão de execução para os arquivos `.php` na raiz do projeto:
 
 ```
-git clone https://github.com/ccuffs/template template
+chmod +x *.php
 ```
+
+### 3. Rodando o script
+
+Todas as opções do script podem ser vistas com a flag `--help`, basta rodar:
+
+```
+php deploy-sitescc.php --help
+```
+
+Se você estiver apenas testando alguma funcionalidade do script, você pode rodá-lo sem muitos problemas. Execute:
+
+```
+php deploy-sitescc.php
+```
+
+Nesse caso, o script rodará utilizando o arquivo [input-list-exemplo.json](input-list-exemplo.json) como fonte de conteúdo.
+Para rodar o script em um ambiente de produção, você utilizará algo como o seguinte:
+
+```
+php deploy-sitescc.php --input-list="https://cc.uffs.edu.br/intranet/api/sites" --output-dir="/var/www/sites" --control-dir="/var/www/sites/api/status"
+```
+
+## Utilização em produção
+
+A utilização desse repositório em produção está intrincicamente ligada ao portal de intranet do curso. Na máquina que rodará esse script (e hospedará os sites), você precisa do seguinte:
+
+* Servidor web para servir as páginas.
+* Pasta web acessível através da URL `/api/status`, por exemplo `/var/www/sites/api/status`. O caminho para essa pasta deve ser utilizado na flag `--control-dir` do script `deploy-sitescc`.
+
+O recomendado é rodar os script de atualização de sites no cron, por exemplo, a cada 15 minutos. Para isso, rode:
+
+```
+crontab -e
+```
+
+Depois adicione a seguinte linha:
+
+```cron
+*/15 * * * * /usr/bin/php deploy-sitescc.php --input-list="https://cc.uffs.edu.br/intranet/api/sites" --output-dir="/var/www/sites" --control-dir="/var/www/sites/api/status" > /var/log/deploy-sites-pessoais.log
+```
+
+Para reduzir a carga de processamento ou memória, pode-se usar `--batch-internval`, `--site-interval` e `--batch-size` ao rodar `deploy-sitescc`. Os valores default para essas flags são bem generosos.
 
 ## Contribua
 
-Sua ajuda é muito bem-vinda, independente da forma! Confira o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para conhecer todas as formas de contribuir com o projeto. Por exemplo, [sugerir uma nova funcionalidade](https://github.com/ccuffs/template/issues/new?assignees=&labels=&template=feature_request.md&title=), [reportar um problema/bug](https://github.com/ccuffs/template/issues/new?assignees=&labels=bug&template=bug_report.md&title=), [enviar um pull request](https://github.com/ccuffs/hacktoberfest/blob/master/docs/tutorial-pull-request.md), ou simplemente utilizar o projeto e comentar sua experiência.
+Sua ajuda é muito bem-vinda, independente da forma! Confira o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para conhecer todas as formas de contribuir com o projeto. Por exemplo, [sugerir uma nova funcionalidade](https://github.com/ccuffs/deploy-sites-pessoais/issues/new?assignees=&labels=&template=feature_request.md&title=), [reportar um problema/bug](https://github.com/ccuffs/deploy-sites-pessoais/issues/new?assignees=&labels=bug&template=bug_report.md&title=), [enviar um pull request](https://github.com/ccuffs/hacktoberfest/blob/master/docs/tutorial-pull-request.md), ou simplemente utilizar o projeto e comentar sua experiência.
 
 Veja o arquivo [ROADMAP.md](ROADMAP.md) para ter uma ideia de como o projeto deve evoluir.
-
 
 ## Licença
 
@@ -64,6 +96,7 @@ Veja todas as alterações desse projeto no arquivo [CHANGELOG.md](CHANGELOG.md)
 
 Abaixo está uma lista de links interessantes e projetos similares:
 
-* [Outro projeto](https://github.com/projeto)
-* [Projeto inspiração](https://github.com/projeto)
-* [Ferramenta semelhante](https://github.com/projeto)
+* [academicpages](https://github.com/academicpages/academicpages.github.io)
+* [Github Pages](https://pages.github.com)
+* [HTML5 Boilerplate](https://html5boilerplate.com)
+* [academic-responsive-template](https://github.com/dmsl/academic-responsive-template)
