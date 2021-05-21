@@ -25,7 +25,16 @@ $result_path = "${prefix}.json";
 
 if(file_exists($output_path)) {
     chdir($output_path);
-    $command = "git reset --hard HEAD & git pull --progress 2>&1";
+
+    // Garante que nenhum processo git anterior ficou pendurado
+    $git_lock_file = $output_path . DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR . 'index.lock';
+    @unlink($git_lock_file);
+    
+    // Seta credenciais para evitar que o git chore por causa delas
+    exec('git config user.name "Deploy Bot"');
+    exec('git config user.email "bot@uffs.cc"');
+    
+    $command = "git reset --hard HEAD & git pull --progress --allow-unrelated-histories 2>&1";
 } else {
     $command = "git clone \"$input_path\" \"$output_path\" --progress 2>&1";
 }
