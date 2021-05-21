@@ -54,7 +54,7 @@ Nesse caso, o script rodará utilizando o arquivo [input-list-exemplo.json](inpu
 Para rodar o script em um ambiente de produção, você utilizará algo como o seguinte:
 
 ```
-php deploy-sitescc.php --input-list="https://cc.uffs.edu.br/intranet/api/sites" --output-dir="/var/www/sites" --control-dir="/var/www/sites/api/status"
+php deploy-sitescc.php --input-list="https://cc.uffs.edu.br/intranet/api/sites/list.json" --output-dir="/var/www/sites" --control-dir="/var/www/sites/api/status"
 ```
 
 ## Utilização em produção
@@ -73,7 +73,7 @@ crontab -e
 Depois adicione a seguinte linha:
 
 ```cron
-*/15 * * * * /usr/bin/php deploy-sitescc.php --input-list="https://cc.uffs.edu.br/intranet/api/sites" --output-dir="/var/www/sites" --control-dir="/var/www/sites/api/status" > /var/log/deploy-sites-pessoais.log
+*/15 * * * * /usr/bin/php /home/fernando/www/deploy-sites-pessoais/deploy-sitescc.php --input-list="https://cc.uffs.edu.br/intranet/api/sites/list.json" --output-dir="/home/fernando/www/sites.cc.uffs.edu.br/public" --control-dir="/home/fernando/www/sites.cc.uffs.edu.br/public/api/status" >> /home/fernando/www/deploy-sites-pessoais/deploy-sitescc.log
 ```
 
 Para reduzir a carga de processamento ou memória, pode-se usar `--batch-internval`, `--site-interval` e `--batch-size` ao rodar `deploy-sitescc`. Os valores default para essas flags são bem generosos.
