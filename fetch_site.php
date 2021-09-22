@@ -34,7 +34,7 @@ if(file_exists($output_path)) {
     exec('git config user.name "Deploy Bot"');
     exec('git config user.email "bot@uffs.cc"');
     
-    $command = "GIT_TERMINAL_PROMPT=0 git reset --hard HEAD && git pull --progress --allow-unrelated-histories 2>&1";
+    $command = "GIT_TERMINAL_PROMPT=0 git clean --force && git reset --hard HEAD && git pull --progress --allow-unrelated-histories 2>&1";
 } else {
     $command = "GIT_TERMINAL_PROMPT=0 git clone \"$input_path\" \"$output_path\" --progress 2>&1";
 }
