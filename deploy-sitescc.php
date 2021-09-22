@@ -26,7 +26,7 @@ function white($str, $eol = false) {
     return $c($str)->white . ($eol ? PHP_EOL : '');
 }
 
-function fetch_site($site, $output_dir_path, $control_dir) {
+function fetch_site($site, $output_dir_path, $control_dir, $force) {
     $fetcher_path = __DIR__ . DIRECTORY_SEPARATOR . 'fetch_site.php';
     $output_path = join(DIRECTORY_SEPARATOR, [$output_dir_path, $site->serve_url]);
     $prefix = join(DIRECTORY_SEPARATOR, [$control_dir, $site->id]);
@@ -34,7 +34,7 @@ function fetch_site($site, $output_dir_path, $control_dir) {
     // Corrige eventual bug onde usuários informavam a URL completa do github na intranet.
     $site_source_url = str_replace('httpsgithubcom', '', $site->source_url);
     
-    $command = "php $fetcher_path --type=$site->source_type --input=\"$site_source_url\" --output=\"$output_path\" --prefix=\"$prefix\" --force=true > /dev/null 2>/dev/null &";
+    $command = "php $fetcher_path --type=$site->source_type --input=\"$site_source_url\" --output=\"$output_path\" --prefix=\"$prefix\" ".($force ? '--force' : '')." > /dev/null 2>/dev/null &";
 
     exec($command);
 }
@@ -48,6 +48,7 @@ $cli->description('Faz deploy dos sites pessoais do curso a partir de uma lista 
     ->opt('batch-size:b', 'Quantos sites devem ser processados por lote.', false, 'integer')
     ->opt('batch-internval:i', 'Tempo, em milisegundos, entre o processamento de um lote e outro.', false, 'integer')
     ->opt('site-interval:s', 'Tempo, em milisegundos, entre o processamento de um site e outro.', false, 'integer')
+    ->opt('force:f', 'Força a remoção de todos os arquivos.')
     ->opt('quiet:q', 'Suprime várias mensagens de saída.');
 
 $args = $cli->parse($argv, true);
@@ -60,6 +61,7 @@ $batch_size = $args->getOpt('batch-size', 50);
 $batch_interval = $args->getOpt('batch-internval', 1000);
 $site_interval = $args->getOpt('site-internval', 200);
 $quiet = $args->getOpt('quiet', false);
+$force = $args->getOpt('force', false);
 
 @$input_list = file_get_contents($input_list_path);
 
@@ -98,7 +100,7 @@ foreach($sites as $site) {
 
     if(!empty($site->source_url)) {
         echo white('  - ') . green($site->source_url) . white(' -> ') . yellow('/' . $site->serve_url) . PHP_EOL;
-        fetch_site($site, $outpur_dir_path, $control_dir_path);
+        fetch_site($site, $outpur_dir_path, $control_dir_path, $force);
         usleep($site_interval);
     } else {
         echo magenta('  SKIP (empty source) ') . white('uid = ' . $site->uid . ', id = ' . $site->id) . PHP_EOL;
