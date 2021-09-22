@@ -34,7 +34,7 @@ function fetch_site($site, $output_dir_path, $control_dir) {
     // Corrige eventual bug onde usuários informavam a URL completa do github na intranet.
     $site_source_url = str_replace('httpsgithubcom', '', $site->source_url);
     
-    $command = "php $fetcher_path --type=$site->source_type --input=\"$site_source_url\" --output=\"$output_path\" --prefix=\"$prefix\" > /dev/null 2>/dev/null &";
+    $command = "php $fetcher_path --type=$site->source_type --input=\"$site_source_url\" --output=\"$output_path\" --prefix=\"$prefix\" --force=true > /dev/null 2>/dev/null &";
 
     exec($command);
 }
