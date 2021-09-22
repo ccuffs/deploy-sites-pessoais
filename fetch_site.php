@@ -9,6 +9,7 @@ $cli->description('Obtem o conteudo de um site.')
     ->opt('type:t', 'Tipo de repositório de conteúdo.')
     ->opt('input:i', 'Caminho para o repositório de conteúdo.', true)
     ->opt('output:o', 'Caminho para o diretorio de saída (onde o site será colocado).', true)
+    ->opt('force:f', 'Força a remoção e criação de arquivos para todas operações.')
     ->opt('prefix:p', 'Prefixo para os arquivos de resultado/log/etc.');
 
 $args = $cli->parse($argv, true);
@@ -18,10 +19,15 @@ $type = $args->getOpt('type', 'git');
 $input_path = $args->getOpt('input');
 $output_path = $args->getOpt('output');
 $prefix = $args->getOpt('prefix', '__ccuffs_site');
+$force = $args->getOpt('force', false);
 
 $output = [];
 $result_code = 0;
 $result_path = "${prefix}.json";
+
+if ($force) {
+    exec("rm -rf \"$output_path\"");
+}
 
 if(file_exists($output_path)) {
     chdir($output_path);
